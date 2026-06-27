@@ -161,7 +161,9 @@
         <nav class="flex items-center gap-7 font-ui text-sm">
           <a href="#writing" class="marker pb-0.5">Writing</a>
           <a href="#about" class="marker pb-0.5">About</a>
+          <!-- Email subscribe — disabled for now
           <a href="#subscribe" class="marker pb-0.5">Subscribe</a>
+          -->
         </nav>
       </div>
     </div>
@@ -331,7 +333,7 @@
       </div>
     </section>
 
-    <!-- ===== Subscribe ===== -->
+    <!-- ===== Subscribe — disabled for now (no email setup yet) =====
     <section id="subscribe" class="max-w-6xl mx-auto px-6 py-24">
       <div class="relative overflow-hidden bg-ink text-paper rounded-3xl px-8 sm:px-16 py-16 text-center">
         <div class="absolute -top-16 -right-16 w-64 h-64 blob bg-teal/30 blur-2xl breathe"></div>
@@ -362,6 +364,7 @@
         </div>
       </div>
     </section>
+    -->
   </main>
 
   <!-- ===== Footer ===== -->
@@ -383,8 +386,8 @@
         dark: false,
         imgError: false,
         year: new Date().getFullYear(),
-        email: "",
-        subscribed: false,
+        // email: "",          // subscribe disabled for now
+        // subscribed: false,
         activeCat: "All",
 
         posts: [
@@ -437,7 +440,7 @@
           this.dark = !this.dark;
           localStorage.setItem("theme", this.dark ? "dark" : "light");
         },
-        subscribe() { this.subscribed = true; this.email = ""; },
+        // subscribe() { this.subscribed = true; this.email = ""; },   // disabled for now
       };
     }
   </script>
