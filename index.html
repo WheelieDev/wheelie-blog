@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en" x-data="blog()" :class="{ 'dark': dark }" x-cloak>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tom Easterbrook — Notes from the front line</title>
+  <meta
+    name="description"
+    content="A personal blog by Tom Easterbrook on adult social care, local government, and life in between."
+  />
+
+  <!-- Tailwind (CDN) with dark mode via class strategy -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+            serif: ["Lora", "ui-serif", "Georgia", "serif"],
+          },
+          keyframes: {
+            float: {
+              "0%, 100%": { transform: "translateY(0)" },
+              "50%": { transform: "translateY(-12px)" },
+            },
+          },
+          animation: {
+            float: "float 5s ease-in-out infinite",
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Alpine.js (CDN) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <style>
+    [x-cloak] { display: none !important; }
+    html { scroll-behavior: smooth; }
+  </style>
+</head>
+
+<body class="font-sans bg-stone-50 text-stone-800 dark:bg-stone-950 dark:text-stone-200 transition-colors duration-300">
+
+  <!-- ===== Header ===== -->
+  <header class="sticky top-0 z-30 backdrop-blur bg-stone-50/80 dark:bg-stone-950/80 border-b border-stone-200 dark:border-stone-800">
+    <nav class="max-w-5xl mx-auto px-5 h-16 flex items-center justify-between">
+      <a href="#top" class="font-semibold tracking-tight text-lg">
+        Tom<span class="text-amber-600">.</span>Easterbrook
+      </a>
+
+      <div class="flex items-center gap-6">
+        <a href="#writing" class="hidden sm:inline text-sm hover:text-amber-600 transition">Writing</a>
+        <a href="#about" class="hidden sm:inline text-sm hover:text-amber-600 transition">About</a>
+        <a href="#subscribe" class="hidden sm:inline text-sm hover:text-amber-600 transition">Subscribe</a>
+
+        <!-- Dark mode toggle -->
+        <button
+          @click="toggleDark()"
+          class="p-2 rounded-full hover:bg-stone-200 dark:hover:bg-stone-800 transition"
+          :aria-label="dark ? 'Switch to light mode' : 'Switch to dark mode'"
+        >
+          <svg x-show="!dark" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+          </svg>
+          <svg x-show="dark" x-cloak xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.36 6.36l-.7-.7M6.34 6.34l-.7-.7m12.72 0l-.7.7M6.34 17.66l-.7.7M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top">
+
+    <!-- ===== Hero ===== -->
+    <section class="max-w-5xl mx-auto px-5 pt-16 pb-20 grid md:grid-cols-2 gap-10 items-center">
+      <div>
+        <p class="text-amber-600 font-medium mb-3">Hello, I'm Tom 👋</p>
+        <h1 class="font-serif text-4xl sm:text-5xl font-semibold leading-tight mb-5">
+          Notes from the front line of care &amp; local government.
+        </h1>
+        <p class="text-lg text-stone-600 dark:text-stone-400 mb-8 max-w-prose">
+          Honest, personal writing about adult social care, the realities of local
+          government, and the human stories in between. No jargon — just lived experience.
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <a href="#writing" class="px-5 py-3 rounded-full bg-amber-600 text-white font-medium hover:bg-amber-700 transition">
+            Read the latest
+          </a>
+          <a href="#subscribe" class="px-5 py-3 rounded-full border border-stone-300 dark:border-stone-700 font-medium hover:bg-stone-100 dark:hover:bg-stone-900 transition">
+            Subscribe
+          </a>
+        </div>
+      </div>
+
+      <!-- Animated caricature.
+           Drop your image at assets/caricature.gif (or .png/.webp/.svg) and it shows automatically.
+           Until then, a friendly placeholder appears. -->
+      <div class="flex justify-center md:justify-end">
+        <div class="relative">
+          <div class="absolute inset-0 bg-amber-400/30 blur-3xl rounded-full"></div>
+          <img
+            src="assets/caricature.gif"
+            alt="Animated caricature of Tom Easterbrook"
+            class="relative w-64 h-64 sm:w-80 sm:h-80 object-contain animate-float drop-shadow-xl"
+            x-show="!imgError"
+            @error="imgError = true"
+          />
+          <!-- Placeholder shown if the image is missing -->
+          <div
+            x-show="imgError"
+            x-cloak
+            class="relative w-64 h-64 sm:w-80 sm:h-80 rounded-full bg-gradient-to-br from-amber-200 to-amber-400 dark:from-amber-700 dark:to-amber-900 flex items-center justify-center animate-float drop-shadow-xl text-center p-6"
+          >
+            <span class="text-amber-900 dark:text-amber-100 font-medium">
+              Your animated caricature goes here<br />
+              <span class="text-sm opacity-70">assets/caricature.gif</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Writing ===== -->
+    <section id="writing" class="max-w-5xl mx-auto px-5 py-16">
+      <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
+        <div>
+          <h2 class="font-serif text-3xl font-semibold">Writing</h2>
+          <p class="text-stone-600 dark:text-stone-400 mt-1">Thoughts, experiences, and the occasional rant.</p>
+        </div>
+
+        <!-- Category filter -->
+        <div class="flex flex-wrap gap-2">
+          <template x-for="cat in categories" :key="cat">
+            <button
+              @click="activeCat = cat"
+              class="px-3 py-1.5 rounded-full text-sm font-medium transition border"
+              :class="activeCat === cat
+                ? 'bg-amber-600 text-white border-amber-600'
+                : 'border-stone-300 dark:border-stone-700 hover:bg-stone-100 dark:hover:bg-stone-900'"
+              x-text="cat"
+            ></button>
+          </template>
+        </div>
+      </div>
+
+      <!-- Posts -->
+      <div class="grid gap-6 sm:grid-cols-2">
+        <template x-for="post in filteredPosts" :key="post.title">
+          <article class="group flex flex-col bg-white dark:bg-stone-900 rounded-2xl border border-stone-200 dark:border-stone-800 p-6 hover:shadow-lg hover:-translate-y-1 transition">
+            <div class="flex items-center gap-2 text-xs mb-3">
+              <span class="px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300 font-medium" x-text="post.category"></span>
+              <span class="text-stone-500" x-text="post.date"></span>
+              <span class="text-stone-400">·</span>
+              <span class="text-stone-500" x-text="post.read"></span>
+            </div>
+            <h3 class="font-serif text-xl font-semibold mb-2 group-hover:text-amber-600 transition" x-text="post.title"></h3>
+            <p class="text-stone-600 dark:text-stone-400 text-sm mb-4 flex-grow" x-text="post.excerpt"></p>
+
+            <!-- Expandable body via Alpine -->
+            <div x-data="{ open: false }">
+              <div x-show="open" x-collapse x-cloak>
+                <p class="text-stone-600 dark:text-stone-400 text-sm mb-4 leading-relaxed" x-text="post.body"></p>
+              </div>
+              <button
+                @click="open = !open"
+                class="text-amber-600 text-sm font-medium hover:underline"
+                x-text="open ? 'Show less ←' : 'Read more →'"
+              ></button>
+            </div>
+          </article>
+        </template>
+      </div>
+
+      <p x-show="filteredPosts.length === 0" x-cloak class="text-center text-stone-500 py-12">
+        Nothing here yet in this category — check back soon.
+      </p>
+    </section>
+
+    <!-- ===== About ===== -->
+    <section id="about" class="bg-white dark:bg-stone-900 border-y border-stone-200 dark:border-stone-800">
+      <div class="max-w-5xl mx-auto px-5 py-16 grid md:grid-cols-3 gap-10">
+        <h2 class="font-serif text-3xl font-semibold">About</h2>
+        <div class="md:col-span-2 space-y-4 text-stone-600 dark:text-stone-300 leading-relaxed max-w-prose">
+          <p>
+            I'm Tom Easterbrook. I've spent my working life around adult social care and
+            local government — the parts that rarely make the headlines but shape people's
+            lives every single day.
+          </p>
+          <p>
+            This blog is where I write it down: the good days, the hard ones, the systems
+            that work and the ones that need fixing. I write for the people doing the work,
+            the people receiving care, and anyone curious about how it all actually fits together.
+          </p>
+          <p>Thanks for reading.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Subscribe ===== -->
+    <section id="subscribe" class="max-w-5xl mx-auto px-5 py-20 text-center">
+      <h2 class="font-serif text-3xl font-semibold mb-3">Never miss a post</h2>
+      <p class="text-stone-600 dark:text-stone-400 mb-8 max-w-md mx-auto">
+        Occasional emails when there's something new worth reading. No spam, unsubscribe anytime.
+      </p>
+
+      <form
+        @submit.prevent="subscribe()"
+        class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
+      >
+        <input
+          type="email"
+          x-model="email"
+          required
+          placeholder="you@example.com"
+          class="flex-grow px-4 py-3 rounded-full border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 focus:outline-none focus:ring-2 focus:ring-amber-500"
+        />
+        <button type="submit" class="px-6 py-3 rounded-full bg-amber-600 text-white font-medium hover:bg-amber-700 transition whitespace-nowrap">
+          Subscribe
+        </button>
+      </form>
+      <p x-show="subscribed" x-cloak class="text-amber-600 mt-4 font-medium">
+        Thanks — you're on the list! 🎉
+      </p>
+    </section>
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer class="border-t border-stone-200 dark:border-stone-800">
+    <div class="max-w-5xl mx-auto px-5 py-10 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-stone-500">
+      <p>© <span x-text="year"></span> Tom Easterbrook. All rights reserved.</p>
+      <div class="flex gap-5">
+        <a href="#" class="hover:text-amber-600 transition">Twitter</a>
+        <a href="#" class="hover:text-amber-600 transition">LinkedIn</a>
+        <a href="#" class="hover:text-amber-600 transition">RSS</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== App logic ===== -->
+  <script>
+    function blog() {
+      return {
+        // theme
+        dark: false,
+        imgError: false,
+        year: new Date().getFullYear(),
+
+        // subscribe
+        email: "",
+        subscribed: false,
+
+        // posts
+        activeCat: "All",
+        posts: [
+          {
+            title: "What 'person-centred' actually means at 7am",
+            category: "Adult Social Care",
+            date: "12 Jun 2026",
+            read: "5 min read",
+            excerpt:
+              "We say 'person-centred care' in every meeting. Here's what it looks like before the kettle's even boiled.",
+            body:
+              "The phrase gets repeated until it loses meaning. But on the ground, person-centred care is a hundred tiny decisions — which mug, which radio station, whether today is a good day for a walk. This is a look at the gap between the policy document and the doorstep.",
+          },
+          {
+            title: "The budget meeting nobody wants to chair",
+            category: "Local Government",
+            date: "28 May 2026",
+            read: "7 min read",
+            excerpt:
+              "Setting a council budget when every line is already someone's lifeline. Notes from the room.",
+            body:
+              "Every number on the spreadsheet is a service, and every service is a person. This is what it's like trying to balance a budget when 'efficiency savings' have a human cost — and how we try to keep that front of mind.",
+          },
+          {
+            title: "Burnout isn't a badge of honour",
+            category: "Wellbeing",
+            date: "9 May 2026",
+            read: "4 min read",
+            excerpt:
+              "Caring for others while running on empty helps no one. What I've learned the hard way.",
+            body:
+              "For years I wore exhaustion like a medal. It took a proper crash to understand that looking after myself wasn't selfish — it was the only way to keep showing up for the people who needed me. Some honest lessons here.",
+          },
+          {
+            title: "Why I started writing this blog",
+            category: "Personal",
+            date: "22 Apr 2026",
+            read: "3 min read",
+            excerpt:
+              "A short note on why I'm putting these experiences into words, and who I hope reads them.",
+            body:
+              "I'm not an expert and I don't have all the answers. But I've seen things worth sharing, and I think the sector talks too much in jargon and not enough in plain human terms. So here we are — thanks for joining me.",
+          },
+        ],
+
+        init() {
+          // restore saved theme, fall back to system preference
+          const saved = localStorage.getItem("theme");
+          if (saved) {
+            this.dark = saved === "dark";
+          } else {
+            this.dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          }
+        },
+
+        get categories() {
+          return ["All", ...new Set(this.posts.map((p) => p.category))];
+        },
+
+        get filteredPosts() {
+          if (this.activeCat === "All") return this.posts;
+          return this.posts.filter((p) => p.category === this.activeCat);
+        },
+
+        toggleDark() {
+          this.dark = !this.dark;
+          localStorage.setItem("theme", this.dark ? "dark" : "light");
+        },
+
+        subscribe() {
+          // Front-end only — wire up to your email provider when ready.
+          this.subscribed = true;
+          this.email = "";
+        },
+      };
+    }
+  </script>
+</body>
+</html>
