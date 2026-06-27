@@ -1,11 +1,9 @@
 # assets
 
-`caricature.jpg` — the animated/painted caricature shown in the hero of `index.html`.
+- **`caricature.png`** — the caricature shown in the hero of `index.html`, with
+  its white background removed (transparent) so it sits cleanly on any page colour.
+- **`caricature-original.jpg`** — the untouched original (2048×2048), kept as a backup.
 
-The hero loads `assets/caricature.jpg` automatically. If the file is missing, a
-friendly placeholder is shown instead.
-
-- A roughly **square** image looks best (the current one is 2048×2048); it's
-  displayed inside an organic "blob" frame with a gentle floating animation.
-- To swap it, replace this file (keep the name `caricature.jpg`), or update the
-  `<img src>` in `index.html` to match a new filename.
+The hero loads `assets/caricature.png` automatically. If it's missing, a friendly
+placeholder is shown instead. To swap it, replace the file (keep the name), or
+update the `<img src>` in `index.html`.

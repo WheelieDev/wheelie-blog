@@ -25,7 +25,7 @@ python3 -m http.server 8000   # then visit http://localhost:8000
 
 ## Adding your caricature
 
-Your caricature lives at `assets/caricature.jpg`. If it's missing, a
+Your caricature lives at `assets/caricature.png`. If it's missing, a
 placeholder is shown in its place. Posts live in the `posts` array inside the
 `<script>` at the bottom of `index.html`.
 
