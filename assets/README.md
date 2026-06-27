@@ -1,11 +1,11 @@
 # assets
 
-Drop your **animated caricature** here named `caricature.gif`.
+`caricature.jpg` — the animated/painted caricature shown in the hero of `index.html`.
 
-The hero on `index.html` loads `assets/caricature.gif` automatically. If the file
-isn't present, a friendly placeholder is shown instead.
+The hero loads `assets/caricature.jpg` automatically. If the file is missing, a
+friendly placeholder is shown instead.
 
-- A `.gif`, `.png`, `.webp`, or `.svg` all work — just keep the filename
-  `caricature.gif`, or update the `src` in `index.html` to match.
-- A roughly square image (e.g. 600×600) looks best, since it's displayed in a
-  fixed square box with a gentle floating animation.
+- A roughly **square** image looks best (the current one is 2048×2048); it's
+  displayed inside an organic "blob" frame with a gentle floating animation.
+- To swap it, replace this file (keep the name `caricature.jpg`), or update the
+  `<img src>` in `index.html` to match a new filename.
