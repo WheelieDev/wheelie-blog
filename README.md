@@ -19,7 +19,10 @@ python3 -m http.server 8000   # then visit http://localhost:8000
 
 - **`index.html`** — single-page home: hero, writing index, about
 - **`article.html`** — newspaper-style article page, rendered from markdown
-- Dark mode toggle (remembers your choice, respects system preference)
+- **Accessibility panel** (floating button, every page): adjust **text size**,
+  **typeface** (Serif / accessible Sans — Atkinson Hyperlegible / dyslexia-friendly
+  OpenDyslexic), and **background** (Light / Sepia / Dark / High-contrast). Choices
+  persist across pages and respect the system dark-mode preference by default.
 - Category filtering on the home page, powered by Alpine
 - Fully responsive
 

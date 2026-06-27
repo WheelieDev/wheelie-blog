@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" x-data="blog()" :class="{ 'dark': dark }" x-cloak>
+<html lang="en" x-data="blog()" :class="htmlClass" :style="`--fs:${fontScale/100}`" x-cloak>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -40,7 +40,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Hanken+Grotesk:wght@400;500;600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Hanken+Grotesk:wght@400;500;600;700&display=swap"
     rel="stylesheet"
   />
 
@@ -72,8 +72,39 @@
       --rust: 93 184 199;
       --line: 56 52 45;
     }
+    /* Accessibility: sepia + high-contrast backgrounds */
+    .theme-sepia {
+      --paper: 244 236 216; --surface: 249 242 226;
+      --ink: 60 48 33; --ink-soft: 112 95 70;
+      --teal: 22 96 110; --teal-bright: 36 132 150; --rust: 22 96 110;
+      --line: 214 198 168;
+    }
+    .theme-contrast {
+      --paper: 0 0 0; --surface: 18 18 18;
+      --ink: 255 255 255; --ink-soft: 224 224 224;
+      --teal: 120 222 236; --teal-bright: 150 236 248; --rust: 120 222 236;
+      --line: 200 200 200;
+    }
 
     body { background-color: rgb(var(--paper)); }
+
+    /* Accessibility: text scaling (root zoom) */
+    html { font-size: calc(100% * var(--fs, 1)); }
+
+    /* Accessibility: typeface — affects body/reading text only;
+       display + UI elements keep their fonts via Tailwind utilities. */
+    @font-face {
+      font-family: "OpenDyslexic"; font-style: normal; font-weight: 400; font-display: swap;
+      src: url("https://cdn.jsdelivr.net/npm/@fontsource/opendyslexic/files/opendyslexic-latin-400-normal.woff2") format("woff2");
+    }
+    @font-face {
+      font-family: "OpenDyslexic"; font-style: normal; font-weight: 700; font-display: swap;
+      src: url("https://cdn.jsdelivr.net/npm/@fontsource/opendyslexic/files/opendyslexic-latin-700-normal.woff2") format("woff2");
+    }
+    .font-serif    { --reading-font: "Newsreader", Georgia, serif; }
+    .font-sans     { --reading-font: "Atkinson Hyperlegible", system-ui, sans-serif; }
+    .font-dyslexic { --reading-font: "OpenDyslexic", "Atkinson Hyperlegible", sans-serif; }
+    body { font-family: var(--reading-font, "Newsreader", Georgia, serif); }
 
     /* Paper grain overlay */
     .grain::before {
@@ -87,6 +118,7 @@
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.45'/%3E%3C/svg%3E");
     }
     .dark .grain::before { mix-blend-mode: screen; opacity: 0.06; }
+    .theme-contrast .grain::before { display: none; }
 
     /* Hand-drawn marker underline for links */
     .marker {
@@ -133,7 +165,7 @@
   </style>
 </head>
 
-<body class="grain font-body text-ink antialiased selection:bg-teal selection:text-paper transition-colors duration-500">
+<body class="grain text-ink antialiased selection:bg-teal selection:text-paper transition-colors duration-500">
 
   <!-- ===== Masthead ===== -->
   <header class="relative z-20">
@@ -142,14 +174,9 @@
       <div class="flex items-center justify-between py-3 text-[11px] font-ui uppercase tracking-mast text-inksoft border-b border-line">
         <span class="hidden sm:inline">Personal · Unfiltered</span>
         <span x-text="`Vol. I — ${year}`"></span>
-        <button
-          @click="toggleDark()"
-          class="flex items-center gap-2 hover:text-teal transition tracking-normal"
-          :aria-label="dark ? 'Switch to light mode' : 'Switch to dark mode'"
-        >
-          <span x-text="dark ? 'Daylight' : 'Lamplight'"></span>
-          <svg x-show="!dark" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-          <svg x-show="dark" x-cloak class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.36 6.36l-.7-.7M6.34 6.34l-.7-.7m12.72 0l-.7.7M6.34 17.66l-.7.7M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        <button @click="panelOpen = !panelOpen" class="flex items-center gap-2 hover:text-teal transition tracking-normal">
+          <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="3.5" r="2"/><path d="M21 8.5c0 .7-.6 1.2-1.3 1.1l-4.2-.6v3.2l2.3 7.6c.2.7-.2 1.4-.9 1.6-.7.2-1.4-.2-1.6-.9L12 14.5l-2.3 6.6c-.2.7-.9 1.1-1.6.9-.7-.2-1.1-.9-.9-1.6l2.3-7.6V9l-4.2.6C4.6 9.7 4 9.2 4 8.5c0-.6.4-1.1 1-1.2L10 6.5h4l5 .8c.6.1 1 .6 1 1.2z"/></svg>
+          <span>Accessibility</span>
         </button>
       </div>
 
@@ -368,11 +395,99 @@
     </div>
   </footer>
 
+  <!-- ===== Accessibility panel ===== -->
+  <div class="fixed bottom-5 right-5 z-40 font-ui">
+    <div
+      x-show="panelOpen" x-cloak @click.outside="panelOpen = false"
+      x-transition
+      class="mb-3 w-72 rounded-2xl border border-line bg-surface text-ink shadow-2xl p-5"
+      role="dialog" aria-label="Accessibility settings"
+    >
+      <div class="flex items-center justify-between mb-4">
+        <span class="text-xs uppercase tracking-[0.2em] text-inksoft">Accessibility</span>
+        <button @click="panelOpen = false" aria-label="Close" class="text-inksoft hover:text-teal text-lg leading-none">&times;</button>
+      </div>
+
+      <!-- Text size -->
+      <p class="text-sm font-semibold mb-2">Text size</p>
+      <div class="flex items-center gap-2 mb-5">
+        <button @click="bumpScale(-10)" aria-label="Decrease text size" class="flex-1 py-2 rounded-lg border border-line hover:border-teal hover:text-teal transition">A<span class="text-xs">−</span></button>
+        <button @click="resetScale()" class="px-3 py-2 rounded-lg border border-line text-xs tabular-nums hover:border-teal hover:text-teal transition" x-text="fontScale + '%'"></button>
+        <button @click="bumpScale(10)" aria-label="Increase text size" class="flex-1 py-2 rounded-lg border border-line hover:border-teal hover:text-teal transition text-lg">A<span class="text-xs">+</span></button>
+      </div>
+
+      <!-- Typeface -->
+      <p class="text-sm font-semibold mb-2">Typeface</p>
+      <div class="grid grid-cols-3 gap-2 mb-5">
+        <button @click="setFont('serif')" :class="font === 'serif' ? 'border-teal text-teal bg-teal/10' : 'border-line hover:border-teal'" class="py-2 rounded-lg border text-sm transition" style="font-family:'Newsreader',serif">Serif</button>
+        <button @click="setFont('sans')" :class="font === 'sans' ? 'border-teal text-teal bg-teal/10' : 'border-line hover:border-teal'" class="py-2 rounded-lg border text-sm transition" style="font-family:'Atkinson Hyperlegible',sans-serif">Sans</button>
+        <button @click="setFont('dyslexic')" :class="font === 'dyslexic' ? 'border-teal text-teal bg-teal/10' : 'border-line hover:border-teal'" class="py-2 rounded-lg border text-xs transition" style="font-family:'OpenDyslexic','Atkinson Hyperlegible',sans-serif" title="Dyslexia-friendly">Dyslexic</button>
+      </div>
+
+      <!-- Background -->
+      <p class="text-sm font-semibold mb-2">Background</p>
+      <div class="grid grid-cols-4 gap-2">
+        <template x-for="opt in themes" :key="opt.k">
+          <button
+            @click="setTheme(opt.k)"
+            :class="theme === opt.k ? 'ring-2 ring-teal' : 'ring-1 ring-line'"
+            :style="opt.swatch"
+            class="py-3 rounded-lg text-[11px] font-semibold transition"
+            x-text="opt.l"
+          ></button>
+        </template>
+      </div>
+    </div>
+
+    <button
+      @click="panelOpen = !panelOpen"
+      class="flex items-center gap-2 px-4 py-3 rounded-full bg-ink text-paper shadow-xl hover:bg-teal transition"
+      :aria-expanded="panelOpen" aria-label="Accessibility options"
+    >
+      <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="3.5" r="2"/><path d="M21 8.5c0 .7-.6 1.2-1.3 1.1l-4.2-.6v3.2l2.3 7.6c.2.7-.2 1.4-.9 1.6-.7.2-1.4-.2-1.6-.9L12 14.5l-2.3 6.6c-.2.7-.9 1.1-1.6.9-.7-.2-1.1-.9-.9-1.6l2.3-7.6V9l-4.2.6C4.6 9.7 4 9.2 4 8.5c0-.6.4-1.1 1-1.2L10 6.5h4l5 .8c.6.1 1 .6 1 1.2z"/></svg>
+      <span class="text-sm font-medium hidden sm:inline">Accessibility</span>
+    </button>
+  </div>
+
   <!-- ===== App logic ===== -->
   <script>
+    // Shared accessibility state: background theme, typeface, text size.
+    // Persisted in localStorage and applied on every page.
+    function a11y() {
+      return {
+        panelOpen: false,
+        theme: "light",     // light | sepia | dark | contrast
+        font: "serif",      // serif | sans | dyslexic
+        fontScale: 100,     // percent, 80–160
+        themes: [
+          { k: "light",    l: "Light",  swatch: "background:#f5f1e8;color:#1f1c17" },
+          { k: "sepia",    l: "Sepia",  swatch: "background:#f4ecd8;color:#3c3021" },
+          { k: "dark",     l: "Dark",   swatch: "background:#151411;color:#f0ebe0" },
+          { k: "contrast", l: "High",   swatch: "background:#000;color:#fff" },
+        ],
+        initA11y() {
+          this.theme = localStorage.getItem("a11y-theme")
+            || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          this.font = localStorage.getItem("a11y-font") || "serif";
+          this.fontScale = parseInt(localStorage.getItem("a11y-scale") || "100", 10);
+        },
+        get htmlClass() {
+          const bg = { light: "", sepia: "theme-sepia", dark: "dark", contrast: "dark theme-contrast" }[this.theme] || "";
+          return `${bg} font-${this.font}`;
+        },
+        setTheme(t) { this.theme = t; localStorage.setItem("a11y-theme", t); },
+        setFont(f) { this.font = f; localStorage.setItem("a11y-font", f); },
+        bumpScale(d) {
+          this.fontScale = Math.min(160, Math.max(80, this.fontScale + d));
+          localStorage.setItem("a11y-scale", this.fontScale);
+        },
+        resetScale() { this.fontScale = 100; localStorage.setItem("a11y-scale", "100"); },
+      };
+    }
+
     function blog() {
       return {
-        dark: false,
+        ...a11y(),
         imgError: false,
         year: new Date().getFullYear(),
         // email: "",          // subscribe disabled for now
@@ -417,19 +532,13 @@
         ],
 
         init() {
-          const saved = localStorage.getItem("theme");
-          this.dark = saved ? saved === "dark"
-            : window.matchMedia("(prefers-color-scheme: dark)").matches;
+          this.initA11y();
         },
         get categories() { return ["All", ...new Set(this.posts.map(p => p.category))]; },
         get filteredPosts() {
           return this.activeCat === "All"
             ? this.posts
             : this.posts.filter(p => p.category === this.activeCat);
-        },
-        toggleDark() {
-          this.dark = !this.dark;
-          localStorage.setItem("theme", this.dark ? "dark" : "light");
         },
         // subscribe() { this.subscribed = true; this.email = ""; },   // disabled for now
       };
