@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" x-data="blog()" :class="htmlClass" :style="`--fs:${fontScale/100}`" x-cloak>
+<html lang="en" x-data="blog()" :class="htmlClass()" :style="`--fs:${fontScale/100}`" x-cloak>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -471,7 +471,9 @@
           this.font = localStorage.getItem("a11y-font") || "serif";
           this.fontScale = parseInt(localStorage.getItem("a11y-scale") || "100", 10);
         },
-        get htmlClass() {
+        // NB: a regular method, not a getter — this object is mixed in via
+        // spread (...a11y()), which would evaluate a getter once and freeze it.
+        htmlClass() {
           const bg = { light: "", sepia: "theme-sepia", dark: "dark", contrast: "dark theme-contrast" }[this.theme] || "";
           return `${bg} font-${this.font}`;
         },
