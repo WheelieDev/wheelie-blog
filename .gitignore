@@ -1,0 +1,22 @@
+# Build output
+/dist/
+/_site/
+/public/build/
+
+# Dependencies
+/node_modules/
+
+# Environment / secrets
+.env
+.env.local
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Logs
+*.log
+npm-debug.log*
