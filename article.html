@@ -73,19 +73,17 @@
     /* ===== Newspaper body ===== */
     .news {
       font-family: "Newsreader", Georgia, serif;
-      font-size: 1.085rem;
-      line-height: 1.62;
+      font-size: 1.2rem;
+      line-height: 1.7;
       text-align: justify;
       hyphens: auto;
       -webkit-hyphens: auto;
       color: rgb(var(--ink) / 0.92);
+      max-width: 40rem;
+      margin: 0 auto;
     }
-    /* Multi-column flow, like newsprint */
-    @media (min-width: 640px) { .news { columns: 2; column-gap: 2.5rem; } }
-    @media (min-width: 1024px){ .news { columns: 3; column-gap: 2.75rem; } }
-    .news { column-rule: 1px solid rgb(var(--line)); }
 
-    .news > * { margin: 0 0 1rem; }
+    .news > * { margin: 0 0 1.15rem; }
     .news p { orphans: 2; widows: 2; }
 
     /* Drop cap on the opening paragraph */
@@ -99,9 +97,7 @@
       color: rgb(var(--teal));
     }
 
-    /* Subheads span all columns */
     .news h2, .news h3 {
-      column-span: all;
       font-family: "Fraunces", Georgia, serif;
       letter-spacing: -0.01em;
       text-align: left;
@@ -123,9 +119,8 @@
     .news ul { list-style: square; }
     .news ol { list-style: decimal; }
 
-    /* Pull-quote style blockquotes span all columns */
+    /* Pull-quote style blockquotes */
     .news blockquote {
-      column-span: all;
       font-family: "Fraunces", Georgia, serif;
       font-style: italic;
       font-size: 1.6rem;
@@ -145,7 +140,7 @@
       filter: grayscale(0.1) contrast(1.02);
     }
     .news hr {
-      column-span: all; border: 0; border-top: 1px solid rgb(var(--line)); margin: 1.5rem 0;
+      border: 0; border-top: 1px solid rgb(var(--line)); margin: 1.5rem 0;
     }
     .news code {
       font-family: ui-monospace, monospace; font-size: 0.85em;
