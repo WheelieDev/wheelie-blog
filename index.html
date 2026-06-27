@@ -205,22 +205,18 @@
         <!-- portrait -->
         <div class="lg:col-span-5 order-1 lg:order-2 flex justify-center reveal" style="animation-delay:.2s">
           <div class="relative w-[18rem] sm:w-[24rem]">
-            <!-- painted halo -->
-            <div class="absolute inset-0 blob-paint bg-teal/25 dark:bg-teal/20 blur-2xl breathe"></div>
-            <div class="absolute -inset-3 blob bg-gradient-to-br from-teal/30 to-rust/20"></div>
-
-            <!-- portrait frame -->
+            <!-- portrait -->
             <div class="relative floaty">
               <img
                 src="assets/caricature.jpg"
                 alt="Watercolour caricature of Tom Easterbrook — auburn hair, glasses, beard, seated in his wheelchair"
-                class="relative w-full aspect-square object-cover blob ring-1 ring-line shadow-2xl"
+                class="relative w-full aspect-square object-contain"
                 x-show="!imgError"
                 @error="imgError = true"
               />
               <div
                 x-show="imgError" x-cloak
-                class="relative w-full aspect-square blob ring-1 ring-line shadow-2xl bg-surface flex items-center justify-center text-center p-8"
+                class="relative w-full aspect-square bg-surface flex items-center justify-center text-center p-8"
               >
                 <span class="font-ui text-inksoft">Drop your caricature at<br /><code class="text-teal">assets/caricature.jpg</code></span>
               </div>
