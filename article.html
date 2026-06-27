@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en" x-data="article()" :class="{ 'dark': dark }" x-cloak>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title x-text="(meta.title ? meta.title + ' — ' : '') + 'The Wheelie'">The Wheelie</title>
+  <meta name="description" :content="meta.dek || 'An essay from The Wheelie by Tom Easterbrook.'" />
+
+  <!-- Tailwind (CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['"Fraunces"', "ui-serif", "Georgia", "serif"],
+            body: ['"Newsreader"', "ui-serif", "Georgia", "serif"],
+            ui: ['"Hanken Grotesk"', "ui-sans-serif", "system-ui", "sans-serif"],
+          },
+          colors: {
+            paper:    "rgb(var(--paper) / <alpha-value>)",
+            surface:  "rgb(var(--surface) / <alpha-value>)",
+            ink:      "rgb(var(--ink) / <alpha-value>)",
+            inksoft:  "rgb(var(--ink-soft) / <alpha-value>)",
+            teal:     "rgb(var(--teal) / <alpha-value>)",
+            tealbright:"rgb(var(--teal-bright) / <alpha-value>)",
+            line:     "rgb(var(--line) / <alpha-value>)",
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,500;1,9..144,600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Hanken+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Markdown parser + Alpine (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <style>
+    [x-cloak] { display: none !important; }
+    html { scroll-behavior: smooth; }
+
+    :root {
+      --paper: 245 241 232; --surface: 250 247 240;
+      --ink: 31 28 23; --ink-soft: 92 84 73;
+      --teal: 24 104 119; --teal-bright: 38 140 158;
+      --line: 213 205 190;
+    }
+    .dark {
+      --paper: 21 20 17; --surface: 30 28 24;
+      --ink: 240 235 224; --ink-soft: 168 159 145;
+      --teal: 93 184 199; --teal-bright: 128 209 222;
+      --line: 56 52 45;
+    }
+    body { background-color: rgb(var(--paper)); }
+
+    /* Paper grain */
+    .grain::before {
+      content: ""; position: fixed; inset: 0; z-index: 1; pointer-events: none;
+      opacity: 0.5; mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.45'/%3E%3C/svg%3E");
+    }
+    .dark .grain::before { mix-blend-mode: screen; opacity: 0.06; }
+
+    /* ===== Newspaper body ===== */
+    .news {
+      font-family: "Newsreader", Georgia, serif;
+      font-size: 1.085rem;
+      line-height: 1.62;
+      text-align: justify;
+      hyphens: auto;
+      -webkit-hyphens: auto;
+      color: rgb(var(--ink) / 0.92);
+    }
+    /* Multi-column flow, like newsprint */
+    @media (min-width: 640px) { .news { columns: 2; column-gap: 2.5rem; } }
+    @media (min-width: 1024px){ .news { columns: 3; column-gap: 2.75rem; } }
+    .news { column-rule: 1px solid rgb(var(--line)); }
+
+    .news > * { margin: 0 0 1rem; }
+    .news p { orphans: 2; widows: 2; }
+
+    /* Drop cap on the opening paragraph */
+    .news > p:first-of-type::first-letter {
+      font-family: "Fraunces", Georgia, serif;
+      font-weight: 600;
+      float: left;
+      font-size: 3.6em;
+      line-height: 0.74;
+      padding: 0.04em 0.1em 0 0;
+      color: rgb(var(--teal));
+    }
+
+    /* Subheads span all columns */
+    .news h2, .news h3 {
+      column-span: all;
+      font-family: "Fraunces", Georgia, serif;
+      letter-spacing: -0.01em;
+      text-align: left;
+      margin-top: 0.5rem;
+    }
+    .news h2 {
+      font-weight: 600; font-size: 1.7rem; line-height: 1.15;
+      border-top: 2px solid rgb(var(--ink));
+      padding-top: 0.6rem;
+    }
+    .news h3 { font-weight: 600; font-size: 1.25rem; }
+
+    .news a { color: rgb(var(--teal)); text-decoration: underline; text-underline-offset: 2px; }
+    .news strong { font-weight: 600; }
+    .news em { font-style: italic; }
+
+    .news ul, .news ol { padding-left: 1.2rem; text-align: left; }
+    .news li { margin-bottom: 0.35rem; }
+    .news ul { list-style: square; }
+    .news ol { list-style: decimal; }
+
+    /* Pull-quote style blockquotes span all columns */
+    .news blockquote {
+      column-span: all;
+      font-family: "Fraunces", Georgia, serif;
+      font-style: italic;
+      font-size: 1.6rem;
+      line-height: 1.3;
+      text-align: center;
+      color: rgb(var(--teal));
+      max-width: 42rem;
+      margin: 1.5rem auto;
+      padding: 0.5rem 1rem;
+      border-top: 1px solid rgb(var(--line));
+      border-bottom: 1px solid rgb(var(--line));
+    }
+    .news blockquote p { margin: 0; }
+
+    .news img {
+      width: 100%; border-radius: 0.25rem; margin: 0.5rem 0;
+      filter: grayscale(0.1) contrast(1.02);
+    }
+    .news hr {
+      column-span: all; border: 0; border-top: 1px solid rgb(var(--line)); margin: 1.5rem 0;
+    }
+    .news code {
+      font-family: ui-monospace, monospace; font-size: 0.85em;
+      background: rgb(var(--surface)); padding: 0.1em 0.35em; border-radius: 0.2rem;
+    }
+    .double-rule { border-top: 3px double rgb(var(--ink)); }
+  </style>
+</head>
+
+<body class="grain font-body text-ink antialiased selection:bg-teal selection:text-paper transition-colors duration-500">
+
+  <!-- ===== Top bar ===== -->
+  <div class="relative z-20 max-w-5xl mx-auto px-6">
+    <div class="flex items-center justify-between py-3 text-[11px] font-ui uppercase tracking-[0.42em] text-inksoft border-b border-line">
+      <a href="index.html" class="hover:text-teal transition tracking-normal">← All writing</a>
+      <span x-text="`Vol. I — ${year}`"></span>
+      <button
+        @click="toggleDark()"
+        class="hover:text-teal transition tracking-normal"
+        :aria-label="dark ? 'Switch to light mode' : 'Switch to dark mode'"
+        x-text="dark ? 'Daylight' : 'Lamplight'"
+      ></button>
+    </div>
+  </div>
+
+  <main class="relative z-10 max-w-5xl mx-auto px-6">
+
+    <!-- ===== Masthead ===== -->
+    <header class="text-center pt-8 pb-6">
+      <div class="flex items-center justify-center gap-4 text-inksoft">
+        <span class="h-px flex-1 bg-line max-w-[6rem]"></span>
+        <span class="font-ui text-[10px] uppercase tracking-[0.42em]">Personal · Unfiltered</span>
+        <span class="h-px flex-1 bg-line max-w-[6rem]"></span>
+      </div>
+      <a href="index.html" class="block font-display font-semibold tracking-tight text-5xl sm:text-7xl mt-3 leading-none">
+        The Wheelie
+      </a>
+      <div class="double-rule mt-5 pt-2 flex items-center justify-center gap-3 font-ui text-[11px] uppercase tracking-[0.3em] text-inksoft">
+        <span x-text="meta.date || '—'"></span>
+        <span class="w-1 h-1 rounded-full bg-line"></span>
+        <span>Notes from the front line</span>
+        <span class="w-1 h-1 rounded-full bg-line"></span>
+        <span>No. <span x-text="edition"></span></span>
+      </div>
+    </header>
+
+    <!-- ===== Loading / error ===== -->
+    <div x-show="state === 'loading'" x-cloak class="py-24 text-center font-ui text-inksoft">
+      Setting the type…
+    </div>
+    <div x-show="state === 'error'" x-cloak class="py-24 text-center">
+      <p class="font-display text-3xl mb-3">Story not found</p>
+      <p class="font-ui text-inksoft mb-6" x-text="errorMsg"></p>
+      <a href="index.html" class="font-ui text-teal underline">← Back to all writing</a>
+    </div>
+
+    <!-- ===== Article ===== -->
+    <article x-show="state === 'ready'" x-cloak class="pb-24">
+
+      <!-- Kicker -->
+      <p class="text-center font-ui uppercase tracking-[0.3em] text-xs text-teal mt-8 mb-4" x-text="meta.category"></p>
+
+      <!-- Headline -->
+      <h1 class="font-display font-semibold text-center leading-[0.98] tracking-tight text-[clamp(2.2rem,6vw,4.5rem)] max-w-4xl mx-auto" x-text="meta.title"></h1>
+
+      <!-- Standfirst / dek -->
+      <p class="font-body italic text-center text-xl sm:text-2xl text-inksoft mt-5 max-w-2xl mx-auto leading-snug" x-text="meta.dek"></p>
+
+      <!-- Byline rule -->
+      <div class="flex flex-wrap items-center justify-center gap-3 my-7 py-3 border-y border-line font-ui text-xs uppercase tracking-[0.2em] text-inksoft">
+        <span>By <span class="text-ink font-semibold" x-text="meta.author || 'Tom Easterbrook'"></span></span>
+        <span class="w-1 h-1 rounded-full bg-line"></span>
+        <span x-text="meta.date"></span>
+        <span class="w-1 h-1 rounded-full bg-line"></span>
+        <span x-text="meta.read || readingTime"></span>
+      </div>
+
+      <!-- Optional lead image -->
+      <figure x-show="meta.image" x-cloak class="mb-7">
+        <img :src="meta.image" :alt="meta.title" class="w-full rounded" style="filter: grayscale(.1) contrast(1.02)" />
+        <figcaption x-show="meta.caption" class="font-ui text-xs text-inksoft mt-2 text-center" x-text="meta.caption"></figcaption>
+      </figure>
+
+      <!-- Body (rendered markdown) -->
+      <div class="news" x-html="html"></div>
+
+      <!-- Footer / sign-off -->
+      <div class="mt-12 pt-6 double-rule text-center">
+        <p class="font-display text-2xl text-teal mb-2">✦</p>
+        <p class="font-ui text-sm text-inksoft mb-6">
+          Written by <span class="text-ink font-semibold" x-text="meta.author || 'Tom Easterbrook'"></span> for The Wheelie.
+        </p>
+        <a href="index.html" class="inline-flex items-center gap-2 font-ui font-medium text-teal">
+          ← Read more essays
+        </a>
+      </div>
+    </article>
+  </main>
+
+  <script>
+    function article() {
+      return {
+        dark: false,
+        state: "loading",      // loading | ready | error
+        errorMsg: "",
+        meta: {},
+        html: "",
+        year: new Date().getFullYear(),
+        edition: 1,
+        readingTime: "",
+
+        init() {
+          const saved = localStorage.getItem("theme");
+          this.dark = saved ? saved === "dark"
+            : window.matchMedia("(prefers-color-scheme: dark)").matches;
+          this.load();
+        },
+
+        toggleDark() {
+          this.dark = !this.dark;
+          localStorage.setItem("theme", this.dark ? "dark" : "light");
+        },
+
+        // Parse simple "key: value" YAML front matter between --- fences.
+        parseFrontMatter(text) {
+          const m = text.match(/^---\s*\r?\n([\s\S]*?)\r?\n---\s*\r?\n?([\s\S]*)$/);
+          if (!m) return { meta: {}, body: text };
+          const meta = {};
+          for (const line of m[1].split(/\r?\n/)) {
+            const idx = line.indexOf(":");
+            if (idx === -1) continue;
+            const key = line.slice(0, idx).trim();
+            let val = line.slice(idx + 1).trim();
+            val = val.replace(/^["']|["']$/g, "");   // strip surrounding quotes
+            meta[key] = val;
+          }
+          return { meta, body: m[2] };
+        },
+
+        async load() {
+          const params = new URLSearchParams(location.search);
+          const slug = (params.get("post") || "").replace(/[^a-z0-9-]/gi, "");
+          if (!slug) {
+            this.state = "error";
+            this.errorMsg = "No article was specified.";
+            return;
+          }
+          try {
+            const res = await fetch(`posts/${slug}.md`, { cache: "no-cache" });
+            if (!res.ok) throw new Error(`Couldn't load posts/${slug}.md (${res.status}).`);
+            const text = await res.text();
+            const { meta, body } = this.parseFrontMatter(text);
+            this.meta = meta;
+            this.readingTime = Math.max(1, Math.round(body.split(/\s+/).length / 200)) + " min";
+            marked.setOptions({ mangle: false, headerIds: false });
+            this.html = marked.parse(body);
+            this.state = "ready";
+            document.title = (meta.title ? meta.title + " — " : "") + "The Wheelie";
+          } catch (err) {
+            this.state = "error";
+            this.errorMsg = err.message + " (Tip: open the site over http://, not file://.)";
+          }
+        },
+      };
+    }
+  </script>
+</body>
+</html>

@@ -259,9 +259,9 @@
 
         <!-- list -->
         <div class="divide-y divide-line border-y border-line">
-          <template x-for="(post, i) in filteredPosts" :key="post.title">
-            <article
-              x-data="{ open: false }"
+          <template x-for="(post, i) in filteredPosts" :key="post.slug">
+            <a
+              :href="`article.html?post=${post.slug}`"
               class="group grid sm:grid-cols-[auto_1fr_auto] gap-x-6 gap-y-3 py-8 items-baseline"
             >
               <span class="font-display text-2xl text-teal/70 tabular-nums" x-text="String(i + 1).padStart(2, '0')"></span>
@@ -274,28 +274,17 @@
                   <span class="w-1 h-1 rounded-full bg-line"></span>
                   <span x-text="post.read"></span>
                 </div>
-                <h3
-                  @click="open = !open"
-                  class="font-display font-medium text-2xl sm:text-3xl leading-tight cursor-pointer transition-colors duration-300 group-hover:text-teal"
-                  x-text="post.title"
-                ></h3>
+                <h3 class="font-display font-medium text-2xl sm:text-3xl leading-tight transition-colors duration-300 group-hover:text-teal" x-text="post.title"></h3>
                 <p class="mt-2 text-lg text-inksoft max-w-2xl" x-text="post.excerpt"></p>
 
-                <div x-show="open" x-collapse x-cloak>
-                  <p class="mt-4 text-lg leading-relaxed max-w-2xl text-ink/90" x-text="post.body"></p>
-                </div>
-
-                <button
-                  @click="open = !open"
-                  class="mt-4 font-ui text-sm font-medium text-teal inline-flex items-center gap-2"
-                >
-                  <span x-text="open ? 'Close' : 'Read essay'"></span>
-                  <span class="transition-transform duration-300" :class="open ? 'rotate-90' : 'group-hover:translate-x-1'">→</span>
-                </button>
+                <span class="mt-4 font-ui text-sm font-medium text-teal inline-flex items-center gap-2">
+                  Read essay
+                  <span class="transition-transform duration-300 group-hover:translate-x-1">→</span>
+                </span>
               </div>
 
               <span class="hidden sm:block font-display text-4xl text-line group-hover:text-teal transition-colors duration-300 self-center">↗</span>
-            </article>
+            </a>
           </template>
         </div>
 
@@ -390,38 +379,40 @@
         // subscribed: false,
         activeCat: "All",
 
+        // Index of essays. Each links to article.html?post=<slug>,
+        // which renders posts/<slug>.md as a newspaper page.
         posts: [
           {
+            slug: "person-centred-at-7am",
             title: "What 'person-centred' actually means at 7am",
             category: "Adult Social Care",
             date: "12 Jun 2026",
             read: "5 min",
             excerpt: "We say it in every meeting. Here's what it looks like before the kettle's even boiled.",
-            body: "The phrase gets repeated until it loses meaning. But on the ground, person-centred care is a hundred tiny decisions — which mug, which radio station, whether today is a good day for a walk. This is a look at the gap between the policy document and the doorstep.",
           },
           {
+            slug: "the-budget-meeting",
             title: "The budget meeting nobody wants to chair",
             category: "Local Government",
             date: "28 May 2026",
             read: "7 min",
             excerpt: "Setting a council budget when every line is already someone's lifeline. Notes from the room.",
-            body: "Every number on the spreadsheet is a service, and every service is a person. This is what it's like trying to balance a budget when 'efficiency savings' have a human cost — and how we try to keep that front of mind.",
           },
           {
+            slug: "ramps-lifts-and-dignity",
             title: "Ramps, lifts, and the dignity of just getting in",
             category: "Life on Wheels",
             date: "16 May 2026",
             read: "6 min",
             excerpt: "Accessibility isn't a checkbox. It's the difference between being invited and being an afterthought.",
-            body: "I've been carried up steps, parked by the bins, and ushered through the kitchen 'because it's easier'. Good access design is quiet and invisible; bad access is a daily reminder of who a place was really built for. Here's what gets it right.",
           },
           {
+            slug: "burnout-is-not-a-badge",
             title: "Burnout isn't a badge of honour",
             category: "Wellbeing",
             date: "9 May 2026",
             read: "4 min",
             excerpt: "Caring for others while running on empty helps no one. What I learned the hard way.",
-            body: "For years I wore exhaustion like a medal. It took a proper crash to understand that looking after myself wasn't selfish — it was the only way to keep showing up for the people who needed me. Some honest lessons here.",
           },
         ],
 
