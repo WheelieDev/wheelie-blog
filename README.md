@@ -4,16 +4,40 @@ A personal blog by Tom Easterbrook, sharing personal experiences in adult social
 care, local government, and other topics.
 
 This repository hosts a static site — a single-page blog built with plain HTML,
-[Tailwind CSS](https://tailwindcss.com/) and [Alpine.js](https://alpinejs.dev/)
-(both loaded via CDN, so there's no build step).
+[Tailwind CSS](https://tailwindcss.com/) (via CDN) and [Alpine.js](https://alpinejs.dev/).
+Alpine and the page logic are bundled as ES modules with [Vite](https://vitejs.dev/).
+
+## Project layout
+
+```
+index.html          home page (Vite entry)
+article.html        article page (Vite entry)
+src/
+  main.js           entry: registers Alpine components + imports styles
+  a11y.js           shared accessibility component (theme / typeface / size)
+  blog.js           home-page component (x-data="blog")
+  article.js        article-page component (x-data="article")
+  styles.css        all custom CSS
+public/
+  posts/<slug>.md   the essays (served at /posts/…)
+  assets/           caricature image, etc.
+```
 
 ## Running it
 
-It's a static site, so just open `index.html` in a browser. For a local server:
+```sh
+npm install      # first time only
+npm run dev      # start the dev server (prints a localhost URL)
+```
+
+To produce the static site for hosting:
 
 ```sh
-python3 -m http.server 8000   # then visit http://localhost:8000
+npm run build    # outputs to dist/
+npm run preview  # serve the built dist/ to check it
 ```
+
+Deploy the contents of `dist/` to any static host (e.g. GitHub Pages).
 
 ## Features
 
@@ -27,13 +51,14 @@ python3 -m http.server 8000   # then visit http://localhost:8000
 - Fully responsive
 
 > **Note:** because article pages `fetch()` markdown files, the site must be
-> served over `http://` (e.g. `python3 -m http.server`, or GitHub Pages).
-> Opening `index.html` directly with `file://` will block those fetches.
+> served over `http://` (the Vite dev server, `npm run preview`, or any static
+> host). Opening the HTML directly with `file://` will block those fetches.
 
 ## Writing articles
 
-Each essay is a markdown file in [`posts/`](posts/), named `<slug>.md`. It opens
-with a small YAML-style front-matter block, then the article body in markdown:
+Each essay is a markdown file in [`public/posts/`](public/posts/), named
+`<slug>.md`. It opens with a small YAML-style front-matter block, then the
+article body in markdown:
 
 ```markdown
 ---
@@ -52,16 +77,16 @@ Your article in **markdown** — headings, _emphasis_, lists, > blockquotes
 ```
 
 `article.html?post=<slug>` loads `posts/<slug>.md`, parses the front-matter, and
-renders the body in a multi-column newspaper layout (masthead, drop cap,
-justified columns, hairline rules).
+renders the body in a single-column newspaper layout (masthead, drop cap,
+justified text, pull-quotes, hairline rules).
 
-To add a post: create `posts/<slug>.md`, then add an entry (with the same
-`slug`) to the `posts` array in the `<script>` at the bottom of `index.html` so
-it shows up in the home-page index.
+To add a post: create `public/posts/<slug>.md`, then add an entry (with the same
+`slug`) to the `posts` array in [`src/blog.js`](src/blog.js) so it shows up in
+the home-page index.
 
 ## Adding your caricature
 
-Your caricature lives at `assets/caricature.png`. If it's missing, a
+Your caricature lives at `public/assets/caricature.png`. If it's missing, a
 placeholder is shown in its place.
 
 ## .gitignore
